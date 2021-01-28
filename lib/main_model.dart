@@ -31,12 +31,12 @@ class MainModel extends ChangeNotifier {
     });
   }
 
-  Future add(model) async {
+  Future add() async {
     final collection = FirebaseFirestore.instance.collection('workoutlist');
     await collection.add({
       'title': newWorkoutText,
       'count': int.parse(newWorkoutDigit),
-      'category': newWorkoutCategory.toLowerCase(),
+      'category': newWorkoutCategory,
       'createdAt': Timestamp.now(),
     });
   }

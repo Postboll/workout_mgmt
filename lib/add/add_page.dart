@@ -9,8 +9,9 @@ import '../main_model.dart';
 class AddPage extends StatefulWidget {
 
   MainModel model;
-  AddPage(this.model, {this.onSelectionChanged});
+  AddPage(this.model);
   Function(List<String>) onSelectionChanged;
+
 
   @override
   _AddPage createState() => _AddPage(model);
@@ -21,6 +22,7 @@ class AddPage extends StatefulWidget {
 class _AddPage extends State<AddPage>{
 
   MainModel model;
+  _MultiSelectChipState item;
 
   _AddPage(this.model);
   String newWorkoutText = "";
@@ -31,6 +33,9 @@ class _AddPage extends State<AddPage>{
     "ジム"
   ];
   List<String> selectedReportList = List();
+
+ // _MultiSelectChipState selectedChoices;
+
 
   @override
   Widget build(BuildContext context) {
@@ -81,6 +86,8 @@ class _AddPage extends State<AddPage>{
                         onSelectionChanged: (selectedList) {
                           setState(() {
                             selectedReportList = selectedList;
+                            print(selectedList);
+                            model.newWorkoutCategory = selectedList.first;
                           });
                         },
                       ),
@@ -92,7 +99,7 @@ class _AddPage extends State<AddPage>{
                         child:Text('追加する'),
                         onPressed: () async {
                         // firestoreに値を追加する
-                        await model.add(model);
+                        await model.add();
                         Navigator.pop(context);
                       },
                 ),
@@ -108,8 +115,8 @@ class _AddPage extends State<AddPage>{
 }
 
 class MultiSelectChip extends StatefulWidget{
-   MainModel model;
 
+   MainModel model;
   final List<String> reportList;
   final Function(List<String>) onSelectionChanged;
   MultiSelectChip(this.reportList, {this.onSelectionChanged});
@@ -125,6 +132,7 @@ class _MultiSelectChipState extends State<MultiSelectChip> {
   MainModel model;
 
   _buildChoiceList(MainModel model) {
+
     List<Widget> choices = List();
 
     widget.reportList.forEach((item) {
@@ -136,10 +144,11 @@ class _MultiSelectChipState extends State<MultiSelectChip> {
           selectedColor: Colors.teal,
           onSelected: (selected) {
             setState(() {
+              Text(selectedChoices.join(" , "));
               selectedChoices.contains(item)
                   ? selectedChoices.remove(item)
                   : selectedChoices.add(item);
-              model.newWorkoutCategory = widget.onSelectionChanged(selectedChoices);
+              widget.onSelectionChanged(selectedChoices);
             });
           },
         ),
