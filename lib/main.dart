@@ -130,7 +130,9 @@ class MainPage extends StatelessWidget {
                   ).toList(),
                 );
               }),
-              SimpleDatumLegend.withSampleData(),
+              Consumer<MainModel>(builder: (context, model, child) {
+                return SimpleDatumLegend.withSampleData();
+              }),
               Icon(Icons.directions_bike),
             ],
           ),
