@@ -31,106 +31,125 @@ class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return ChangeNotifierProvider<MainModel>(
+    return DefaultTabController(
 
-      create: (_) => MainModel()..getWorkoutListRealtime(),
+      length: 3,
 
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text("Workout at home"),
-          actions: [
-            Consumer<MainModel>(builder: (context, model, child) {
-              final isActive = model.checkShouldActiveCompleteButton();
+      child: ChangeNotifierProvider<MainModel>(
 
-              return FlatButton(
-                onPressed: isActive
-                    ? () async {
-                  await model.deleteCheckedItems();
-                }
-                    : null,
-                child: Text(
-                  '削除',
-                  style: TextStyle(
-                    color:
-                    isActive ? Colors.white : Colors.white.withOpacity(0.5),
+        create: (_) => MainModel()..getWorkoutListRealtime(),
+
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("Workout at home"),
+            actions: [
+              Consumer<MainModel>(builder: (context, model, child) {
+                final isActive = model.checkShouldActiveCompleteButton();
+
+                return FlatButton(
+                  onPressed: isActive
+                      ? () async {
+                    await model.deleteCheckedItems();
+                  }
+                      : null,
+                  child: Text(
+                    '削除',
+                    style: TextStyle(
+                      color:
+                      isActive ? Colors.white : Colors.white.withOpacity(0.5),
+                    ),
                   ),
-                ),
-              );
-            })
-          ],
+                );
+              })
+            ],
+            bottom: TabBar(
+              tabs: [
+                Tab(icon: Icon(Icons.directions_car)),
+                Tab(icon: Icon(Icons.directions_transit)),
+                Tab(icon: Icon(Icons.directions_bike)),
+              ],
+            ),
+          ),
+          body: TabBarView(
+
+            children: [
+              Consumer<MainModel>(builder: (context, model, child) {
+
+                final workoutlist = model.workoutlist;
+
+                return GridView.count(
+                  primary: false,
+                  crossAxisCount: 2,
+                  padding: const EdgeInsets.all(20),
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  children: workoutlist
+                      .map(
+                        (workout) => Container(
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              stops: [0.3, 1],
+                              colors: [Colors.teal, Colors.blue]
+                          )
+                      ),
+
+                      child: CheckboxListTile(
+                        checkColor: Colors.white,
+                        activeColor: Colors.orange,
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: 20),
+                              child: Text(workout.title,
+                                  style: TextStyle(fontSize: 14)),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 20),
+                              child: Text(workout.item,
+                                  style: TextStyle(fontSize: 14)),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 70),
+                              child: Text(workout.count,
+                                  style: TextStyle(fontSize: 12)),
+                            ),
+                          ],
+
+                        ),
+                        value: workout.isDone,
+                        onChanged: (bool value) {
+                          workout.isDone = !workout.isDone;
+                          model.reload();
+                        },
+                      ),
+                    ),
+                  ).toList(),
+                );
+              }),
+              Icon(Icons.directions_transit),
+              Icon(Icons.directions_bike),
+            ],
+          ),
+          floatingActionButton:
+          Consumer<MainModel>(builder: (context, model, child) {
+            return FloatingActionButton(
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddPage(model),
+                    fullscreenDialog: true,
+                  ),
+                );
+              },
+              child: Icon(Icons.touch_app),
+            );
+          }),
         ),
-        body: Consumer<MainModel>(builder: (context, model, child) {
-
-          final workoutlist = model.workoutlist;
-
-          return GridView.count(
-            primary: false,
-            crossAxisCount: 2,
-            padding: const EdgeInsets.all(20),
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-            children: workoutlist
-                .map(
-                  (workout) => Container(
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        stops: [0.3, 1],
-                        colors: [Colors.teal, Colors.blue]
-                    )
-                ),
-
-                child: CheckboxListTile(
-                  checkColor: Colors.white,
-                  activeColor: Colors.orange,
-                  title: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20),
-                        child: Text(workout.title,
-                            style: TextStyle(fontSize: 14)),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20),
-                        child: Text(workout.item,
-                            style: TextStyle(fontSize: 14)),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 70),
-                        child: Text(workout.count,
-                            style: TextStyle(fontSize: 12)),
-                      ),
-                    ],
-
-                  ),
-                  value: workout.isDone,
-                  onChanged: (bool value) {
-                    workout.isDone = !workout.isDone;
-                    model.reload();
-                  },
-                ),
-              ),
-            ).toList(),
-          );
-        }),
-        floatingActionButton:
-        Consumer<MainModel>(builder: (context, model, child) {
-          return FloatingActionButton(
-            onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AddPage(model),
-                  fullscreenDialog: true,
-                ),
-              );
-            },
-            child: Icon(Icons.touch_app),
-          );
-        }),
       ),
     );
   }
