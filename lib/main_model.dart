@@ -9,6 +9,7 @@ class MainModel extends ChangeNotifier {
   String newWorkoutText = '';
   String newWorkoutDigit = '';
   String newWorkoutCategory = '';
+  List<QuerySnapshot> querylist = [];
 
   Future getWorkoutList() async {
     final snapshot =
@@ -29,6 +30,13 @@ class MainModel extends ChangeNotifier {
       this.workoutlist = workoutlist;
       notifyListeners();
     });
+  }
+
+  void getCategorylist(){
+    final querylist = FirebaseFirestore.instance.collection('workoutlist')
+        .where('category', isEqualTo: '自重')
+        .get();
+
   }
 
   Future add() async {
@@ -62,4 +70,5 @@ class MainModel extends ChangeNotifier {
     final checkedItems = workoutlist.where((todo) => todo.isDone).toList();
     return checkedItems.length > 0;
   }
+
 }

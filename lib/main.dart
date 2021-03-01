@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:workout_app/timer.dart';
 import 'add/add_page.dart';
 import 'main_model.dart';
 import 'main_graph.dart';
@@ -25,7 +26,9 @@ class MyApp extends StatelessWidget {
   }
 }
 
+
 class MainPage extends StatelessWidget {
+
 
   @override
   Widget build(BuildContext context) {
@@ -132,8 +135,11 @@ class MainPage extends StatelessWidget {
               Consumer<MainModel>(builder: (context, model, child) {
 
                 return SimpleDatumLegend.withSampleData(model);
+
               }),
-              Icon(Icons.directions_bike),
+
+              CountdownTimer(),
+
             ],
           ),
           floatingActionButton:
