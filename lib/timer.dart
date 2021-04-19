@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 
 
 
-
 class CountdownTimer extends StatefulWidget {
   @override
   _CountdownTimer createState() => _CountdownTimer();
@@ -30,8 +29,8 @@ class _ExamplePageState extends State<ExamplePage> with TickerProviderStateMixin
   Duration initialtimer = new Duration();
   int selectitem = 1;
   AnimationController controller;
-  String time;
-  int times;
+  int time;
+
 
   String get timerString {
     Duration duration = controller.duration * controller.value;
@@ -39,14 +38,6 @@ class _ExamplePageState extends State<ExamplePage> with TickerProviderStateMixin
   }
 
 
-  @override
-  void initState() {
-    super.initState();
-    controller = AnimationController(
-      vsync: this,
-      duration: Duration(minutes:1),
-    );
-  }
 
   Widget timePicker() {
     return CupertinoTimerPicker(
@@ -58,13 +49,19 @@ class _ExamplePageState extends State<ExamplePage> with TickerProviderStateMixin
         setState(() {
           initialtimer = changedtimer;
           time =
-              (changedtimer.inMinutes % 60).toString() +
-              ' mins ' +
-              (changedtimer.inSeconds % 60).toString() +
-              ' secs';
-          
+              (changedtimer.inMinutes % 60+
+              changedtimer.inSeconds % 60);
         });
       },
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    controller = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: time),
     );
   }
 
